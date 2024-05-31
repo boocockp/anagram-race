@@ -1,0 +1,321 @@
+{
+  "id": "project_1",
+  "name": "Anagram Race",
+  "properties": {},
+  "elements": [
+    {
+      "id": "app_1",
+      "name": "Anagram Race",
+      "properties": {},
+      "elements": [
+        {
+          "id": "page_1",
+          "name": "Main Page",
+          "properties": {},
+          "elements": [
+            {
+              "id": "text_1",
+              "name": "Title",
+              "properties": {
+                "content": "Anagram Race",
+                "styles": {
+                  "fontSize": 24
+                }
+              },
+              "kind": "Text"
+            },
+            {
+              "id": "text_7",
+              "name": "Text 7",
+              "properties": {
+                "content": "3 minutes to solve as many anagrams as you can!"
+              },
+              "kind": "Text"
+            },
+            {
+              "id": "button_3",
+              "name": "Start Game",
+              "properties": {
+                "action": {
+                  "expr": "Reset(Attempt)\nReset(GivenUp)\nReset(Score)\nReset(GameTimer)\nReset(TheWord)\nReset(ScrambledWord)\nGameTimer.Start()"
+                }
+              },
+              "kind": "Button"
+            },
+            {
+              "id": "timer_1",
+              "name": "Game Timer",
+              "properties": {
+                "period": 180,
+                "interval": 1,
+                "show": false
+              },
+              "kind": "Timer"
+            },
+            {
+              "id": "data_4",
+              "name": "Score",
+              "properties": {
+                "initialValue": {
+                  "expr": "0"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "data_1",
+              "name": "The Word",
+              "properties": {},
+              "kind": "Data"
+            },
+            {
+              "id": "function_1",
+              "name": "Points",
+              "properties": {
+                "input1": "word",
+                "calculation": {
+                  "expr": "Floor(Len(word) * 1.5)"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "data_2",
+              "name": "Scrambled Word",
+              "properties": {},
+              "kind": "Data"
+            },
+            {
+              "id": "data_3",
+              "name": "Given Up",
+              "properties": {
+                "initialValue": {
+                  "expr": "false"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "calculation_2",
+              "name": "Answering",
+              "properties": {
+                "calculation": {
+                  "expr": "And(TheWord, Not(IsCorrect), Not(GivenUp))"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "layout_2",
+              "name": "Stats Layout",
+              "properties": {
+                "horizontal": true,
+                "styles": {
+                  "fontSize": "32"
+                }
+              },
+              "elements": [
+                {
+                  "id": "text_5",
+                  "name": "Score Display",
+                  "properties": {
+                    "content": {
+                      "expr": "Score + \" points\""
+                    },
+                    "styles": {
+                      "fontSize": "inherit",
+                      "color": "blue"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_6",
+                  "name": "Time Display",
+                  "properties": {
+                    "content": {
+                      "expr": "Ceiling(GameTimer. remainingTime) + \" seconds left\""
+                    },
+                    "styles": {
+                      "fontSize": "inherit",
+                      "color": "green",
+                      "marginLeft": "100"
+                    }
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Layout"
+            },
+            {
+              "id": "layout_3",
+              "name": "Question Layout",
+              "properties": {
+                "horizontal": true
+              },
+              "elements": [
+                {
+                  "id": "text_8",
+                  "name": "Scrambled Letters",
+                  "properties": {
+                    "content": {
+                      "expr": "ScrambledWord"
+                    },
+                    "styles": {
+                      "fontSize": "20",
+                      "letterSpacing": "1px"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_9",
+                  "name": "Points To Win",
+                  "properties": {
+                    "content": {
+                      "expr": "Points(TheWord) + \" points\""
+                    },
+                    "styles": {
+                      "paddingTop": "3",
+                      "marginLeft": "5em"
+                    }
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Layout"
+            },
+            {
+              "id": "layout_1",
+              "name": "Answer Layout",
+              "properties": {
+                "horizontal": true,
+                "wrap": true,
+                "styles": {
+                  "marginTop": "20px"
+                }
+              },
+              "elements": [
+                {
+                  "id": "textinput_1",
+                  "name": "Attempt",
+                  "properties": {
+                    "label": "Your Answer",
+                    "readOnly": {
+                      "expr": "Not(Answering)"
+                    },
+                    "initialValue": {
+                      "expr": "If(GivenUp, TheWord, '')"
+                    },
+                    "styles": {
+                      "fontSize": "20",
+                      "marginTop": "20px"
+                    }
+                  },
+                  "kind": "TextInput"
+                },
+                {
+                  "id": "icon_1",
+                  "name": "Correct Indicator",
+                  "properties": {
+                    "iconName": "check_circle",
+                    "styles": {
+                      "fontSize": "40",
+                      "color": "green"
+                    },
+                    "show": {
+                      "expr": "IsCorrect"
+                    }
+                  },
+                  "kind": "Icon"
+                },
+                {
+                  "id": "text_4",
+                  "name": "Word Points",
+                  "properties": {
+                    "content": {
+                      "expr": "Points(TheWord) + \" points added\""
+                    },
+                    "show": {
+                      "expr": "IsCorrect"
+                    }
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Layout"
+            },
+            {
+              "id": "calculation_1",
+              "name": "Is Correct",
+              "properties": {
+                "calculation": {
+                  "expr": "And(Eq(Attempt, TheWord), Not(GivenUp))"
+                },
+                "show": false,
+                "whenTrueAction": {
+                  "expr": "Set(Score, Score + Points(TheWord))"
+                }
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "button_1",
+              "name": "Start Word",
+              "properties": {
+                "action": {
+                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
+                },
+                "show": {
+                  "expr": "Not(Answering)"
+                },
+                "enabled": {
+                  "expr": "GameTimer.isRunning"
+                }
+              },
+              "kind": "Button"
+            },
+            {
+              "id": "button_2",
+              "name": "Give Up",
+              "properties": {
+                "action": {
+                  "expr": "Set(GivenUp, true)"
+                },
+                "show": {
+                  "expr": "Answering"
+                }
+              },
+              "kind": "Button"
+            }
+          ],
+          "kind": "Page"
+        },
+        {
+          "id": "functionimport_1",
+          "name": "WordList",
+          "properties": {
+            "source": "words1.js",
+            "exportName": "Words"
+          },
+          "kind": "FunctionImport"
+        }
+      ],
+      "kind": "App"
+    },
+    {
+      "id": "_TOOLS",
+      "name": "Tools",
+      "properties": {},
+      "kind": "ToolFolder"
+    },
+    {
+      "id": "_COMPONENTS",
+      "name": "Components",
+      "properties": {},
+      "kind": "ComponentFolder"
+    }
+  ],
+  "kind": "Project"
+}
