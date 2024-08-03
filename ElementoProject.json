@@ -29,45 +29,6 @@
               "kind": "Text"
             },
             {
-              "id": "dialog_1",
-              "name": "Instructions",
-              "properties": {
-                "initiallyOpen": true,
-                "layout": "vertical",
-                "showCloseButton": true,
-                "styles": {
-                  "padding": "2em"
-                }
-              },
-              "elements": [
-                {
-                  "id": "text_10",
-                  "name": "Instructions Text",
-                  "properties": {
-                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n\n- Words may be plural",
-                    "allowHtml": true
-                  },
-                  "kind": "Text"
-                },
-                {
-                  "id": "button_3",
-                  "name": "Start Game 2",
-                  "properties": {
-                    "action": {
-                      "expr": "StartNewGame()\nInstructions.Close()"
-                    },
-                    "show": {
-                      "expr": "Not(GameRunning)"
-                    },
-                    "content": "Start Game",
-                    "appearance": "filled"
-                  },
-                  "kind": "Button"
-                }
-              ],
-              "kind": "Dialog"
-            },
-            {
               "id": "timer_1",
               "name": "Game Timer",
               "properties": {
@@ -189,6 +150,67 @@
               "kind": "Function"
             },
             {
+              "id": "function_6",
+              "name": "Pause Game",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "Set(Status, 'Paused')\nGameTimer.Stop()"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_5",
+              "name": "Continue Game",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "Set(Status, 'Playing')\nStartNewWord()\nGameTimer.Start()"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "dialog_1",
+              "name": "Instructions",
+              "properties": {
+                "initiallyOpen": true,
+                "layout": "vertical",
+                "showCloseButton": true,
+                "styles": {
+                  "padding": "2em"
+                }
+              },
+              "elements": [
+                {
+                  "id": "text_10",
+                  "name": "Instructions Text",
+                  "properties": {
+                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n\n- Words may be plural\n- You can Pause the game, but it will skip the word you're on",
+                    "allowHtml": true
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "button_3",
+                  "name": "Start Game 2",
+                  "properties": {
+                    "action": {
+                      "expr": "StartNewGame()\nInstructions.Close()"
+                    },
+                    "show": {
+                      "expr": "Not(GameRunning)"
+                    },
+                    "content": "Start Game",
+                    "appearance": "filled"
+                  },
+                  "kind": "Button"
+                }
+              ],
+              "kind": "Dialog"
+            },
+            {
               "id": "layout_2",
               "name": "Stats Layout",
               "properties": {
@@ -281,6 +303,42 @@
                   "name": "Ready Text",
                   "properties": {
                     "content": "Solve as many anagrams as you can in 3 minutes\n\nClick Instructions to learn how to play\n\nOr Start Game to dive right in!",
+                    "styles": {
+                      "fontSize": "20"
+                    }
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Block"
+            },
+            {
+              "id": "block_7",
+              "name": "Pause Panel",
+              "properties": {
+                "show": {
+                  "expr": "Status == 'Paused'"
+                }
+              },
+              "elements": [
+                {
+                  "id": "text_20",
+                  "name": "Title",
+                  "properties": {
+                    "content": "Paused...",
+                    "styles": {
+                      "color": "#7529df",
+                      "fontFamily": "Luckiest Guy",
+                      "fontSize": "28"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_21",
+                  "name": "Pause Text",
+                  "properties": {
+                    "content": "Click Continue Game to carry on",
                     "styles": {
                       "fontSize": "20"
                     }
@@ -517,6 +575,32 @@
                     },
                     "show": {
                       "expr": "GameRunning"
+                    }
+                  },
+                  "kind": "Button"
+                },
+                {
+                  "id": "button_10",
+                  "name": "Pause Game",
+                  "properties": {
+                    "action": {
+                      "expr": "PauseGame()"
+                    },
+                    "show": {
+                      "expr": "Status == 'Playing'"
+                    }
+                  },
+                  "kind": "Button"
+                },
+                {
+                  "id": "button_11",
+                  "name": "Continue Game",
+                  "properties": {
+                    "action": {
+                      "expr": "ContinueGame()"
+                    },
+                    "show": {
+                      "expr": "Status == 'Paused'"
                     }
                   },
                   "kind": "Button"

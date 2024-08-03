@@ -7,11 +7,10 @@ const WordList = await import('../files/words1.js').then(...importHandlers('Word
 // MainPage.js
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
-    const {Page, TextElement, Dialog, Button, Timer, Data, Calculation, Block, TextInput, Icon} = Elemento.components
-    const {Not, Floor, Len, And, Or, RandomFrom, Join, Shuffle, Split, Ceiling, If, Eq} = Elemento.globalFunctions
+    const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, TextInput, Icon} = Elemento.components
+    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Ceiling, If, Eq} = Elemento.globalFunctions
     const {Reset, Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
-    const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).initiallyOpen(true).props))
     const Status = _state.setObject(pathTo('Status'), new Data.State(stateProps(pathTo('Status')).value('Ready').props))
     const Score = _state.setObject(pathTo('Score'), new Data.State(stateProps(pathTo('Score')).value(0).props))
     const TheWord = _state.setObject(pathTo('TheWord'), new Data.State(stateProps(pathTo('TheWord')).props))
@@ -28,8 +27,14 @@ function MainPage(props) {
         await EndGame()
     }), [EndGame])
     const GameTimer = _state.setObject(pathTo('GameTimer'), new Timer.State(stateProps(pathTo('GameTimer')).period(180).interval(1).endAction(GameTimer_endAction).props))
+    const PauseGame = React.useCallback(wrapFn(pathTo('PauseGame'), 'calculation', () => {
+        Set(Status, 'Paused')
+        return GameTimer.Stop()
+    }), [Status, GameTimer])
+    const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).initiallyOpen(true).props))
     const StatsLayout = _state.setObject(pathTo('StatsLayout'), new Block.State(stateProps(pathTo('StatsLayout')).props))
     const ReadyPanel = _state.setObject(pathTo('ReadyPanel'), new Block.State(stateProps(pathTo('ReadyPanel')).props))
+    const PausePanel = _state.setObject(pathTo('PausePanel'), new Block.State(stateProps(pathTo('PausePanel')).props))
     const PlayPanel = _state.setObject(pathTo('PlayPanel'), new Block.State(stateProps(pathTo('PlayPanel')).props))
     const QuestionLayout = _state.setObject(pathTo('QuestionLayout'), new Block.State(stateProps(pathTo('QuestionLayout')).props))
     const AnswerLayout = _state.setObject(pathTo('AnswerLayout'), new Block.State(stateProps(pathTo('AnswerLayout')).props))
@@ -53,6 +58,11 @@ function MainPage(props) {
         StartNewWord()
         return GameTimer.Start()
     }), [Attempt, GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord])
+    const ContinueGame = React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', () => {
+        Set(Status, 'Playing')
+        StartNewWord()
+        return GameTimer.Start()
+    }), [Status, StartNewWord, GameTimer])
     const IsCorrect_whenTrueAction = React.useCallback(wrapFn(pathTo('IsCorrect'), 'whenTrueAction', async () => {
         Set(Score, Score + (await Points(TheWord)))
     }), [Score, Points, TheWord])
@@ -76,6 +86,12 @@ function MainPage(props) {
     const StopGame_action = React.useCallback(wrapFn(pathTo('StopGame'), 'action', async () => {
         await EndGame()
     }), [EndGame])
+    const PauseGame_action = React.useCallback(wrapFn(pathTo('PauseGame'), 'action', async () => {
+        await PauseGame()
+    }), [])
+    const ContinueGame_action = React.useCallback(wrapFn(pathTo('ContinueGame'), 'action', async () => {
+        await ContinueGame()
+    }), [])
     const Instructions_action = React.useCallback(wrapFn(pathTo('Instructions'), 'action', async () => {
         await Instructions.Show()
     }), [])
@@ -83,6 +99,14 @@ function MainPage(props) {
 
     return React.createElement(Page, elProps(props.path).props,
         React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('48').fontFamily('Luckiest Guy').color('#7529df').props).content('Agraman Race').props),
+        React.createElement(Timer, elProps(pathTo('GameTimer')).show(false).props),
+        React.createElement(Data, elProps(pathTo('Status')).display(false).props),
+        React.createElement(Data, elProps(pathTo('Score')).display(false).props),
+        React.createElement(Data, elProps(pathTo('TheWord')).display(false).props),
+        React.createElement(Data, elProps(pathTo('ScrambledWord')).display(false).props),
+        React.createElement(Data, elProps(pathTo('GivenUp')).display(false).props),
+        React.createElement(Calculation, elProps(pathTo('Answering')).show(false).props),
+        React.createElement(Calculation, elProps(pathTo('GameRunning')).show(false).props),
         React.createElement(Dialog, elProps(pathTo('Instructions')).layout('vertical').showCloseButton(true).styles(elProps(pathTo('Instructions.Styles')).padding('2em').props).props,
             React.createElement(TextElement, elProps(pathTo('InstructionsText')).allowHtml(true).content(`You have 3 minutes to solve as many anagrams as you can.
 
@@ -98,17 +122,10 @@ Click Next Word to move on to the next word.
 
 <b>Tips</b>
 
-- Words may be plural`).props),
+- Words may be plural
+- You can Pause the game, but it will skip the word you're on`).props),
             React.createElement(Button, elProps(pathTo('StartGame2')).content('Start Game').appearance('filled').show(Not(GameRunning)).action(StartGame2_action).props),
     ),
-        React.createElement(Timer, elProps(pathTo('GameTimer')).show(false).props),
-        React.createElement(Data, elProps(pathTo('Status')).display(false).props),
-        React.createElement(Data, elProps(pathTo('Score')).display(false).props),
-        React.createElement(Data, elProps(pathTo('TheWord')).display(false).props),
-        React.createElement(Data, elProps(pathTo('ScrambledWord')).display(false).props),
-        React.createElement(Data, elProps(pathTo('GivenUp')).display(false).props),
-        React.createElement(Calculation, elProps(pathTo('Answering')).show(false).props),
-        React.createElement(Calculation, elProps(pathTo('GameRunning')).show(false).props),
         React.createElement(Block, elProps(pathTo('StatsLayout')).layout('horizontal').styles(elProps(pathTo('StatsLayout.Styles')).fontSize('32').props).props,
             React.createElement(TextElement, elProps(pathTo('ScoreDisplay')).show(Or(GameRunning, Status == 'Ended')).styles(elProps(pathTo('ScoreDisplay.Styles')).fontSize('inherit').color('blue').marginRight('100').props).content(Score + ' points').props),
             React.createElement(TextElement, elProps(pathTo('TimeDisplay')).show(GameRunning).styles(elProps(pathTo('TimeDisplay.Styles')).fontSize('inherit').color('green').props).content(Ceiling(GameTimer. remainingTime) + ' seconds left').props),
@@ -121,6 +138,10 @@ Click Next Word to move on to the next word.
 Click Instructions to learn how to play
 
 Or Start Game to dive right in!`).props),
+    ),
+        React.createElement(Block, elProps(pathTo('PausePanel')).layout('vertical').show(Status == 'Paused').props,
+            React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).color('#7529df').fontFamily('Luckiest Guy').fontSize('28').props).content('Paused...').props),
+            React.createElement(TextElement, elProps(pathTo('PauseText')).styles(elProps(pathTo('PauseText.Styles')).fontSize('20').props).content('Click Continue Game to carry on').props),
     ),
         React.createElement(Block, elProps(pathTo('PlayPanel')).layout('vertical').show(Status == 'Playing').props,
             React.createElement(Block, elProps(pathTo('QuestionLayout')).layout('horizontal').props,
@@ -144,6 +165,8 @@ Or Start Game to dive right in!`).props),
         React.createElement(Block, elProps(pathTo('ControlsLayout')).layout('horizontal').props,
             React.createElement(Button, elProps(pathTo('StartGame')).content('Start Game').appearance('filled').show(Not(GameRunning)).action(StartGame_action).props),
             React.createElement(Button, elProps(pathTo('StopGame')).content('Stop Game').appearance('outline').show(GameRunning).action(StopGame_action).props),
+            React.createElement(Button, elProps(pathTo('PauseGame')).content('Pause Game').appearance('outline').show(Status == 'Playing').action(PauseGame_action).props),
+            React.createElement(Button, elProps(pathTo('ContinueGame')).content('Continue Game').appearance('outline').show(Status == 'Paused').action(ContinueGame_action).props),
             React.createElement(Button, elProps(pathTo('Instructions')).content('Instructions').appearance('outline').action(Instructions_action).props),
     ),
     )
