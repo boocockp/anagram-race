@@ -6,7 +6,9 @@
     {
       "id": "app_1",
       "name": "Anagram Race",
-      "properties": {},
+      "properties": {
+        "fonts": "Luckiest+Guy"
+      },
       "elements": [
         {
           "id": "page_1",
@@ -17,30 +19,53 @@
               "id": "text_1",
               "name": "Title",
               "properties": {
-                "content": "Anagram Race",
+                "content": "Agraman Race",
                 "styles": {
-                  "fontSize": 24
+                  "fontSize": "48",
+                  "fontFamily": "Luckiest Guy",
+                  "color": "#7529df"
                 }
               },
               "kind": "Text"
             },
             {
-              "id": "text_7",
-              "name": "Text 7",
+              "id": "dialog_1",
+              "name": "Instructions",
               "properties": {
-                "content": "3 minutes to solve as many anagrams as you can!"
-              },
-              "kind": "Text"
-            },
-            {
-              "id": "button_3",
-              "name": "Start Game",
-              "properties": {
-                "action": {
-                  "expr": "Reset(Attempt)\nReset(GivenUp)\nReset(Score)\nReset(GameTimer)\nReset(TheWord)\nReset(ScrambledWord)\nGameTimer.Start()"
+                "initiallyOpen": true,
+                "layout": "vertical",
+                "showCloseButton": true,
+                "styles": {
+                  "padding": "2em"
                 }
               },
-              "kind": "Button"
+              "elements": [
+                {
+                  "id": "text_10",
+                  "name": "Instructions Text",
+                  "properties": {
+                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n\n- Words may be plural",
+                    "allowHtml": true
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "button_3",
+                  "name": "Start Game 2",
+                  "properties": {
+                    "action": {
+                      "expr": "StartNewGame()\nInstructions.Close()"
+                    },
+                    "show": {
+                      "expr": "Not(GameRunning)"
+                    },
+                    "content": "Start Game",
+                    "appearance": "filled"
+                  },
+                  "kind": "Button"
+                }
+              ],
+              "kind": "Dialog"
             },
             {
               "id": "timer_1",
@@ -48,9 +73,22 @@
               "properties": {
                 "period": 180,
                 "interval": 1,
-                "show": false
+                "show": false,
+                "endAction": {
+                  "expr": "EndGame()"
+                }
               },
               "kind": "Timer"
+            },
+            {
+              "id": "data_5",
+              "name": "Status",
+              "properties": {
+                "initialValue": {
+                  "expr": "'Ready'"
+                }
+              },
+              "kind": "Data"
             },
             {
               "id": "data_4",
@@ -107,10 +145,54 @@
               "kind": "Calculation"
             },
             {
+              "id": "calculation_3",
+              "name": "Game Running",
+              "properties": {
+                "calculation": {
+                  "expr": "Or(Status == 'Playing', Status == 'Paused')"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "function_2",
+              "name": "Start New Game",
+              "properties": {
+                "calculation": {
+                  "expr": "Reset(Attempt)\nReset(GivenUp)\nReset(Score)\nReset(GameTimer)\nReset(TheWord)\nReset(ScrambledWord)\nSet(Status, 'Playing')\nStartNewWord()\nGameTimer.Start()"
+                },
+                "action": true
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_3",
+              "name": "Start New Word",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_4",
+              "name": "End Game",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "Set(Status, 'Ended')"
+                }
+              },
+              "kind": "Function"
+            },
+            {
               "id": "layout_2",
               "name": "Stats Layout",
               "properties": {
-                "horizontal": true,
+                "layout": "horizontal",
                 "styles": {
                   "fontSize": "32"
                 }
@@ -125,7 +207,11 @@
                     },
                     "styles": {
                       "fontSize": "inherit",
-                      "color": "blue"
+                      "color": "blue",
+                      "marginRight": "100"
+                    },
+                    "show": {
+                      "expr": "Or(GameRunning, Status == 'Ended')"
                     }
                   },
                   "kind": "Text"
@@ -139,155 +225,314 @@
                     },
                     "styles": {
                       "fontSize": "inherit",
-                      "color": "green",
-                      "marginLeft": "100"
-                    }
-                  },
-                  "kind": "Text"
-                }
-              ],
-              "kind": "Layout"
-            },
-            {
-              "id": "layout_3",
-              "name": "Question Layout",
-              "properties": {
-                "horizontal": true
-              },
-              "elements": [
-                {
-                  "id": "text_8",
-                  "name": "Scrambled Letters",
-                  "properties": {
-                    "content": {
-                      "expr": "ScrambledWord"
-                    },
-                    "styles": {
-                      "fontSize": "20",
-                      "letterSpacing": "1px"
-                    }
-                  },
-                  "kind": "Text"
-                },
-                {
-                  "id": "text_9",
-                  "name": "Points To Win",
-                  "properties": {
-                    "content": {
-                      "expr": "Points(TheWord) + \" points\""
-                    },
-                    "styles": {
-                      "paddingTop": "3",
-                      "marginLeft": "5em"
-                    }
-                  },
-                  "kind": "Text"
-                }
-              ],
-              "kind": "Layout"
-            },
-            {
-              "id": "layout_1",
-              "name": "Answer Layout",
-              "properties": {
-                "horizontal": true,
-                "wrap": true,
-                "styles": {
-                  "marginTop": "20px"
-                }
-              },
-              "elements": [
-                {
-                  "id": "textinput_1",
-                  "name": "Attempt",
-                  "properties": {
-                    "label": "Your Answer",
-                    "readOnly": {
-                      "expr": "Not(Answering)"
-                    },
-                    "initialValue": {
-                      "expr": "If(GivenUp, TheWord, '')"
-                    },
-                    "styles": {
-                      "fontSize": "20",
-                      "marginTop": "20px"
-                    }
-                  },
-                  "kind": "TextInput"
-                },
-                {
-                  "id": "icon_1",
-                  "name": "Correct Indicator",
-                  "properties": {
-                    "iconName": "check_circle",
-                    "styles": {
-                      "fontSize": "40",
                       "color": "green"
                     },
                     "show": {
-                      "expr": "IsCorrect"
+                      "expr": "GameRunning"
                     }
                   },
-                  "kind": "Icon"
+                  "kind": "Text"
                 },
                 {
-                  "id": "text_4",
-                  "name": "Word Points",
+                  "id": "text_18",
+                  "name": "Game Over",
                   "properties": {
-                    "content": {
-                      "expr": "Points(TheWord) + \" points added\""
+                    "content": "Game Over",
+                    "styles": {
+                      "fontSize": "inherit",
+                      "color": "white",
+                      "backgroundColor": "green",
+                      "padding": "0 0.5em",
+                      "borderRadius": "8px"
                     },
                     "show": {
-                      "expr": "IsCorrect"
+                      "expr": "Status == 'Ended'"
                     }
                   },
                   "kind": "Text"
                 }
               ],
-              "kind": "Layout"
+              "kind": "Block"
             },
             {
-              "id": "calculation_1",
-              "name": "Is Correct",
+              "id": "block_5",
+              "name": "Ready Panel",
               "properties": {
-                "calculation": {
-                  "expr": "And(Eq(Attempt, TheWord), Not(GivenUp))"
-                },
-                "show": false,
-                "whenTrueAction": {
-                  "expr": "Set(Score, Score + Points(TheWord))"
-                }
-              },
-              "kind": "Calculation"
-            },
-            {
-              "id": "button_1",
-              "name": "Start Word",
-              "properties": {
-                "action": {
-                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
-                },
                 "show": {
-                  "expr": "Not(Answering)"
-                },
-                "enabled": {
-                  "expr": "GameTimer.isRunning"
+                  "expr": "Status == 'Ready'"
                 }
               },
-              "kind": "Button"
+              "elements": [
+                {
+                  "id": "text_19",
+                  "name": "Title",
+                  "properties": {
+                    "content": "Welcome!",
+                    "styles": {
+                      "color": "#7529df",
+                      "fontFamily": "Luckiest Guy",
+                      "fontSize": "28"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_14",
+                  "name": "Ready Text",
+                  "properties": {
+                    "content": "Solve as many anagrams as you can in 3 minutes\n\nClick Instructions to learn how to play\n\nOr Start Game to dive right in!",
+                    "styles": {
+                      "fontSize": "20"
+                    }
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Block"
             },
             {
-              "id": "button_2",
-              "name": "Give Up",
+              "id": "block_2",
+              "name": "Play Panel",
               "properties": {
-                "action": {
-                  "expr": "Set(GivenUp, true)"
-                },
+                "layout": "vertical",
                 "show": {
-                  "expr": "Answering"
+                  "expr": "Status == 'Playing'"
                 }
               },
-              "kind": "Button"
+              "elements": [
+                {
+                  "id": "block_3",
+                  "name": "Question Layout",
+                  "properties": {
+                    "layout": "horizontal"
+                  },
+                  "elements": [
+                    {
+                      "id": "text_11",
+                      "name": "Scrambled Letters",
+                      "properties": {
+                        "content": {
+                          "expr": "ScrambledWord"
+                        },
+                        "styles": {
+                          "fontSize": "20",
+                          "letterSpacing": "1px"
+                        }
+                      },
+                      "kind": "Text"
+                    },
+                    {
+                      "id": "text_12",
+                      "name": "Points To Win",
+                      "properties": {
+                        "content": {
+                          "expr": "Points(TheWord) + \" points\""
+                        },
+                        "styles": {
+                          "paddingTop": "3",
+                          "marginLeft": "5em"
+                        }
+                      },
+                      "kind": "Text"
+                    }
+                  ],
+                  "kind": "Block"
+                },
+                {
+                  "id": "block_4",
+                  "name": "Answer Layout",
+                  "properties": {
+                    "layout": "horizontal wrapped",
+                    "styles": {
+                      "marginTop": "20px"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "textinput_1",
+                      "name": "Attempt",
+                      "properties": {
+                        "label": "Your Answer",
+                        "readOnly": {
+                          "expr": "Not(Answering)"
+                        },
+                        "initialValue": {
+                          "expr": "If(GivenUp, TheWord, '')"
+                        },
+                        "styles": {
+                          "fontSize": "20",
+                          "marginTop": "20px"
+                        }
+                      },
+                      "kind": "TextInput"
+                    },
+                    {
+                      "id": "icon_1",
+                      "name": "Correct Indicator",
+                      "properties": {
+                        "iconName": "check_circle",
+                        "styles": {
+                          "fontSize": "40",
+                          "color": "green"
+                        },
+                        "show": {
+                          "expr": "IsCorrect"
+                        }
+                      },
+                      "kind": "Icon"
+                    },
+                    {
+                      "id": "text_13",
+                      "name": "Word Points",
+                      "properties": {
+                        "content": {
+                          "expr": "Points(TheWord) + \" points added\""
+                        },
+                        "show": {
+                          "expr": "IsCorrect"
+                        }
+                      },
+                      "kind": "Text"
+                    }
+                  ],
+                  "kind": "Block"
+                },
+                {
+                  "id": "calculation_4",
+                  "name": "Is Correct",
+                  "properties": {
+                    "calculation": {
+                      "expr": "And(Eq(Attempt, TheWord), Not(GivenUp))"
+                    },
+                    "show": false,
+                    "whenTrueAction": {
+                      "expr": "Set(Score, Score + Points(TheWord))"
+                    }
+                  },
+                  "kind": "Calculation"
+                },
+                {
+                  "id": "button_8",
+                  "name": "Next Word",
+                  "properties": {
+                    "action": {
+                      "expr": "StartNewWord()"
+                    },
+                    "show": {
+                      "expr": "Not(Answering)"
+                    },
+                    "enabled": {
+                      "expr": "GameTimer.isRunning"
+                    }
+                  },
+                  "kind": "Button"
+                },
+                {
+                  "id": "button_9",
+                  "name": "Give Up",
+                  "properties": {
+                    "action": {
+                      "expr": "Set(GivenUp, true)"
+                    },
+                    "show": {
+                      "expr": "Answering"
+                    },
+                    "content": "Skip Word"
+                  },
+                  "kind": "Button"
+                }
+              ],
+              "kind": "Block"
+            },
+            {
+              "id": "block_6",
+              "name": "Ended Panel",
+              "properties": {
+                "show": {
+                  "expr": "Status == 'Ended'"
+                }
+              },
+              "elements": [
+                {
+                  "id": "text_15",
+                  "name": "Text A",
+                  "properties": {
+                    "content": "Congratulations!",
+                    "styles": {
+                      "fontFamily": "Luckiest Guy",
+                      "fontSize": "28",
+                      "color": "#7529df"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_16",
+                  "name": "Text 16",
+                  "properties": {
+                    "content": {
+                      "expr": "'You have scored ' + Score + ' points!'"
+                    }
+                  },
+                  "kind": "Text"
+                },
+                {
+                  "id": "text_17",
+                  "name": "Text 17",
+                  "properties": {
+                    "content": "Click Start Game to have a another go"
+                  },
+                  "kind": "Text"
+                }
+              ],
+              "kind": "Block"
+            },
+            {
+              "id": "block_1",
+              "name": "Controls Layout",
+              "properties": {
+                "layout": "horizontal"
+              },
+              "elements": [
+                {
+                  "id": "button_6",
+                  "name": "Start Game",
+                  "properties": {
+                    "action": {
+                      "expr": "StartNewGame()"
+                    },
+                    "show": {
+                      "expr": "Not(GameRunning)"
+                    },
+                    "appearance": "filled"
+                  },
+                  "kind": "Button"
+                },
+                {
+                  "id": "button_7",
+                  "name": "Stop Game",
+                  "properties": {
+                    "action": {
+                      "expr": "EndGame()"
+                    },
+                    "show": {
+                      "expr": "GameRunning"
+                    }
+                  },
+                  "kind": "Button"
+                },
+                {
+                  "id": "button_4",
+                  "name": "Instructions",
+                  "properties": {
+                    "action": {
+                      "expr": "Instructions.Show()"
+                    }
+                  },
+                  "kind": "Button"
+                }
+              ],
+              "kind": "Block"
             }
           ],
           "kind": "Page"
