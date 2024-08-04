@@ -7,7 +7,8 @@
       "id": "app_1",
       "name": "Anagram Race",
       "properties": {
-        "fonts": "Luckiest+Guy"
+        "fonts": "Luckiest+Guy",
+        "maxWidth": "600px"
       },
       "elements": [
         {

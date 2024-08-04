@@ -181,5 +181,5 @@ export default function AnagramRace(props) {
     const _state = Elemento.useGetStore()
     const app = _state.setObject('AnagramRace', new App.State({pages, appContext}))
 
-    return React.createElement(App, {...elProps('AnagramRace').props},)
+    return React.createElement(App, {...elProps('AnagramRace').maxWidth('600px').fonts(['Luckiest+Guy']).props},)
 }
