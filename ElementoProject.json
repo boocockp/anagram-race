@@ -69,12 +69,23 @@
               "kind": "Data"
             },
             {
+              "id": "data_6",
+              "name": "Letters Shown",
+              "properties": {
+                "initialValue": {
+                  "expr": "0"
+                }
+              },
+              "kind": "Data"
+            },
+            {
               "id": "function_1",
               "name": "Points",
+              "notes": "Could be tuned to balance difficulty of long words and help given by showing letters",
               "properties": {
                 "input1": "word",
                 "calculation": {
-                  "expr": "Floor(Len(word) * 1.5)"
+                  "expr": "Floor(Len(word) * 2 - LettersShown * 3)"
                 }
               },
               "kind": "Function"
@@ -134,7 +145,7 @@
               "properties": {
                 "action": true,
                 "calculation": {
-                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
+                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(LettersShown)\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
                 }
               },
               "kind": "Function"
@@ -188,7 +199,7 @@
                   "id": "text_10",
                   "name": "Instructions Text",
                   "properties": {
-                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n\n- Words may be plural\n- You can Pause the game, but it will skip the word you're on",
+                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Show A Letter to show some of the initial letters - but you will score fewer points.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n<ul>\n<li>Words may be plural</li>\n<li>You can Pause the game, but it will skip the word you're on</li>\n</b>",
                     "allowHtml": true
                   },
                   "kind": "Text"
@@ -217,7 +228,7 @@
               "properties": {
                 "layout": "horizontal",
                 "styles": {
-                  "fontSize": "32"
+                  "fontSize": "24"
                 }
               },
               "elements": [
@@ -244,7 +255,7 @@
                   "name": "Time Display",
                   "properties": {
                     "content": {
-                      "expr": "Ceiling(GameTimer. remainingTime) + \" seconds left\""
+                      "expr": "Ceiling(GameTimer. remainingTime) + \"s left\""
                     },
                     "styles": {
                       "fontSize": "inherit",
@@ -398,13 +409,38 @@
                   "kind": "Block"
                 },
                 {
+                  "id": "block_8",
+                  "name": "Clues Layout",
+                  "properties": {
+                    "layout": "horizontal"
+                  },
+                  "elements": [
+                    {
+                      "id": "text_22",
+                      "name": "Starts With",
+                      "properties": {
+                        "content": {
+                          "expr": "'Starts with: ' + Left(TheWord, LettersShown)"
+                        },
+                        "styles": {
+                          "fontSize": "20",
+                          "letterSpacing": "1px"
+                        },
+                        "show": {
+                          "expr": "LettersShown > 0"
+                        }
+                      },
+                      "kind": "Text"
+                    }
+                  ],
+                  "kind": "Block"
+                },
+                {
                   "id": "block_4",
                   "name": "Answer Layout",
                   "properties": {
                     "layout": "horizontal wrapped",
-                    "styles": {
-                      "marginTop": "20px"
-                    }
+                    "styles": {}
                   },
                   "elements": [
                     {
@@ -461,7 +497,7 @@
                   "name": "Is Correct",
                   "properties": {
                     "calculation": {
-                      "expr": "And(Eq(Attempt, TheWord), Not(GivenUp))"
+                      "expr": "And(Eq(Lowercase(Trim(Attempt)), TheWord), Not(GivenUp))"
                     },
                     "show": false,
                     "whenTrueAction": {
@@ -471,34 +507,60 @@
                   "kind": "Calculation"
                 },
                 {
-                  "id": "button_8",
-                  "name": "Next Word",
+                  "id": "block_9",
+                  "name": "Word Buttons",
                   "properties": {
-                    "action": {
-                      "expr": "StartNewWord()"
+                    "layout": "horizontal wrapped"
+                  },
+                  "elements": [
+                    {
+                      "id": "button_12",
+                      "name": "Next Word",
+                      "properties": {
+                        "action": {
+                          "expr": "StartNewWord()"
+                        },
+                        "show": {
+                          "expr": "Not(Answering)"
+                        },
+                        "enabled": {
+                          "expr": "GameTimer.isRunning"
+                        }
+                      },
+                      "kind": "Button"
                     },
-                    "show": {
-                      "expr": "Not(Answering)"
+                    {
+                      "id": "button_13",
+                      "name": "Give Up",
+                      "properties": {
+                        "action": {
+                          "expr": "Set(GivenUp, true)"
+                        },
+                        "show": {
+                          "expr": "Answering"
+                        },
+                        "content": "Skip Word"
+                      },
+                      "kind": "Button"
                     },
-                    "enabled": {
-                      "expr": "GameTimer.isRunning"
+                    {
+                      "id": "button_14",
+                      "name": "Show A Letter",
+                      "properties": {
+                        "action": {
+                          "expr": "Set(LettersShown, LettersShown + 1)\nAttempt.Focus()"
+                        },
+                        "show": {
+                          "expr": "Answering"
+                        },
+                        "enabled": {
+                          "expr": "Lte(LettersShown, 2)"
+                        }
+                      },
+                      "kind": "Button"
                     }
-                  },
-                  "kind": "Button"
-                },
-                {
-                  "id": "button_9",
-                  "name": "Give Up",
-                  "properties": {
-                    "action": {
-                      "expr": "Set(GivenUp, true)"
-                    },
-                    "show": {
-                      "expr": "Answering"
-                    },
-                    "content": "Skip Word"
-                  },
-                  "kind": "Button"
+                  ],
+                  "kind": "Block"
                 }
               ],
               "kind": "Block"
@@ -626,7 +688,7 @@
           "id": "functionimport_1",
           "name": "WordList",
           "properties": {
-            "source": "words1.js",
+            "source": "words2.js",
             "exportName": "Words"
           },
           "kind": "FunctionImport"
