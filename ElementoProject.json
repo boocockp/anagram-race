@@ -81,7 +81,6 @@
             {
               "id": "function_1",
               "name": "Points",
-              "notes": "Could be tuned to balance difficulty of long words and help given by showing letters",
               "properties": {
                 "input1": "word",
                 "calculation": {
@@ -133,7 +132,7 @@
               "name": "Start New Game",
               "properties": {
                 "calculation": {
-                  "expr": "Reset(Attempt)\nReset(GivenUp)\nReset(Score)\nReset(GameTimer)\nReset(TheWord)\nReset(ScrambledWord)\nSet(Status, 'Playing')\nStartNewWord()\nGameTimer.Start()"
+                  "expr": "Reset(GivenUp)\nReset(Score)\nReset(GameTimer)\nReset(TheWord)\nReset(ScrambledWord)\nSet(Status, 'Playing')\nStartNewWord()\nGameTimer.Start()"
                 },
                 "action": true
               },
@@ -145,7 +144,7 @@
               "properties": {
                 "action": true,
                 "calculation": {
-                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(LettersShown)\nReset(Attempt)\nReset(GivenUp)\nAttempt.Focus()"
+                  "expr": "let word = RandomFrom(WordList())\nSet(TheWord, word)\nSet(ScrambledWord, Join(Shuffle(Split(word))))\nReset(LettersShown)\nReset(Keyboard) \nReset(GivenUp)"
                 }
               },
               "kind": "Function"
@@ -156,7 +155,7 @@
               "properties": {
                 "action": true,
                 "calculation": {
-                  "expr": "Set(Status, 'Ended')"
+                  "expr": "Set(Status, 'Ended')\n"
                 }
               },
               "kind": "Function"
@@ -444,22 +443,22 @@
                   },
                   "elements": [
                     {
-                      "id": "textinput_1",
-                      "name": "Attempt",
+                      "id": "text_23",
+                      "name": "Current Attempt",
                       "properties": {
-                        "label": "Your Answer",
-                        "readOnly": {
-                          "expr": "Not(Answering)"
-                        },
-                        "initialValue": {
-                          "expr": "If(GivenUp, TheWord, '')"
+                        "content": {
+                          "expr": "If(GivenUp, TheWord,Keyboard)"
                         },
                         "styles": {
                           "fontSize": "20",
-                          "marginTop": "20px"
+                          "border": "2px solid lightgray",
+                          "padding": "1px 10px",
+                          "borderRadius": "5",
+                          "minWidth": "10em",
+                          "height": "32"
                         }
                       },
-                      "kind": "TextInput"
+                      "kind": "Text"
                     },
                     {
                       "id": "icon_1",
@@ -497,7 +496,7 @@
                   "name": "Is Correct",
                   "properties": {
                     "calculation": {
-                      "expr": "And(Eq(Lowercase(Trim(Attempt)), TheWord), Not(GivenUp))"
+                      "expr": "And(Eq(Lowercase(Trim(Keyboard)), TheWord), Not(GivenUp))"
                     },
                     "show": false,
                     "whenTrueAction": {
@@ -505,6 +504,14 @@
                     }
                   },
                   "kind": "Calculation"
+                },
+                {
+                  "id": "screenkeyboard_1",
+                  "name": "Keyboard",
+                  "properties": {
+                    "useRealKeyboard": true
+                  },
+                  "kind": "ScreenKeyboard"
                 },
                 {
                   "id": "block_9",
@@ -548,7 +555,7 @@
                       "name": "Show A Letter",
                       "properties": {
                         "action": {
-                          "expr": "Set(LettersShown, LettersShown + 1)\nAttempt.Focus()"
+                          "expr": "Set(LettersShown, LettersShown + 1)"
                         },
                         "show": {
                           "expr": "Answering"
@@ -634,7 +641,7 @@
                   "name": "Stop Game",
                   "properties": {
                     "action": {
-                      "expr": "EndGame()"
+                      "expr": "EndGame()\nGameTimer.Stop()"
                     },
                     "show": {
                       "expr": "GameRunning"

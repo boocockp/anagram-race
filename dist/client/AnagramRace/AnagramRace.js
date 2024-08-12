@@ -7,7 +7,7 @@ const WordList = await import('../files/words2.js').then(...importHandlers('Word
 // MainPage.js
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
-    const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, TextInput, Icon} = Elemento.components
+    const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, Icon, ScreenKeyboard} = Elemento.components
     const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Ceiling, Left, If, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
     const {Reset, Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
@@ -40,18 +40,16 @@ function MainPage(props) {
     const QuestionLayout = _state.setObject(pathTo('QuestionLayout'), new Block.State(stateProps(pathTo('QuestionLayout')).props))
     const CluesLayout = _state.setObject(pathTo('CluesLayout'), new Block.State(stateProps(pathTo('CluesLayout')).props))
     const AnswerLayout = _state.setObject(pathTo('AnswerLayout'), new Block.State(stateProps(pathTo('AnswerLayout')).props))
-    const Attempt = _state.setObject(pathTo('Attempt'), new TextInput.State(stateProps(pathTo('Attempt')).value(If(GivenUp, TheWord, '')).props))
+    const Keyboard = _state.setObject(pathTo('Keyboard'), new ScreenKeyboard.State(stateProps(pathTo('Keyboard')).props))
     const StartNewWord = React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', () => {
         let word = RandomFrom(WordList())
         Set(TheWord, word)
         Set(ScrambledWord, Join(Shuffle(Split(word))))
         Reset(LettersShown)
-        Reset(Attempt)
-        Reset(GivenUp)
-        return Attempt.Focus()
-    }), [TheWord, ScrambledWord, LettersShown, Attempt, GivenUp])
+        Reset(Keyboard)
+        return Reset(GivenUp)
+    }), [TheWord, ScrambledWord, LettersShown, Keyboard, GivenUp])
     const StartNewGame = React.useCallback(wrapFn(pathTo('StartNewGame'), 'calculation', () => {
-        Reset(Attempt)
         Reset(GivenUp)
         Reset(Score)
         Reset(GameTimer)
@@ -60,7 +58,7 @@ function MainPage(props) {
         Set(Status, 'Playing')
         StartNewWord()
         return GameTimer.Start()
-    }), [Attempt, GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord])
+    }), [GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord])
     const ContinueGame = React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', () => {
         Set(Status, 'Playing')
         StartNewWord()
@@ -69,7 +67,7 @@ function MainPage(props) {
     const IsCorrect_whenTrueAction = React.useCallback(wrapFn(pathTo('IsCorrect'), 'whenTrueAction', async () => {
         Set(Score, Score + (await Points(TheWord)))
     }), [Score, Points, TheWord])
-    const IsCorrect = _state.setObject(pathTo('IsCorrect'), new Calculation.State(stateProps(pathTo('IsCorrect')).value(And(Eq(Lowercase(Trim(Attempt)), TheWord), Not(GivenUp))).whenTrueAction(IsCorrect_whenTrueAction).props))
+    const IsCorrect = _state.setObject(pathTo('IsCorrect'), new Calculation.State(stateProps(pathTo('IsCorrect')).value(And(Eq(Lowercase(Trim(Keyboard)), TheWord), Not(GivenUp))).whenTrueAction(IsCorrect_whenTrueAction).props))
     const Answering = _state.setObject(pathTo('Answering'), new Calculation.State(stateProps(pathTo('Answering')).value(And(TheWord, Not(IsCorrect), Not(GivenUp))).props))
     const WordButtons = _state.setObject(pathTo('WordButtons'), new Block.State(stateProps(pathTo('WordButtons')).props))
     const EndedPanel = _state.setObject(pathTo('EndedPanel'), new Block.State(stateProps(pathTo('EndedPanel')).props))
@@ -84,16 +82,16 @@ function MainPage(props) {
     const GiveUp_action = React.useCallback(wrapFn(pathTo('GiveUp'), 'action', () => {
         Set(GivenUp, true)
     }), [GivenUp])
-    const ShowALetter_action = React.useCallback(wrapFn(pathTo('ShowALetter'), 'action', async () => {
+    const ShowALetter_action = React.useCallback(wrapFn(pathTo('ShowALetter'), 'action', () => {
         Set(LettersShown, LettersShown + 1)
-        await Attempt.Focus()
-    }), [LettersShown, Attempt])
+    }), [LettersShown])
     const StartGame_action = React.useCallback(wrapFn(pathTo('StartGame'), 'action', async () => {
         await StartNewGame()
     }), [StartNewGame])
     const StopGame_action = React.useCallback(wrapFn(pathTo('StopGame'), 'action', async () => {
         await EndGame()
-    }), [EndGame])
+        await GameTimer.Stop()
+    }), [EndGame, GameTimer])
     const PauseGame_action = React.useCallback(wrapFn(pathTo('PauseGame'), 'action', async () => {
         await PauseGame()
     }), [])
@@ -165,11 +163,12 @@ Or Start Game to dive right in!`).props),
             React.createElement(TextElement, elProps(pathTo('StartsWith')).show(LettersShown > 0).styles(elProps(pathTo('StartsWith.Styles')).fontSize('20').letterSpacing('1px').props).content('Starts with: ' + Left(TheWord, LettersShown)).props),
     ),
             React.createElement(Block, elProps(pathTo('AnswerLayout')).layout('horizontal wrapped').styles(elProps(pathTo('AnswerLayout.Styles')).props).props,
-            React.createElement(TextInput, elProps(pathTo('Attempt')).label('Your Answer').readOnly(Not(Answering)).styles(elProps(pathTo('Attempt.Styles')).fontSize('20').marginTop('20px').props).props),
+            React.createElement(TextElement, elProps(pathTo('CurrentAttempt')).styles(elProps(pathTo('CurrentAttempt.Styles')).fontSize('20').border('2px solid lightgray').padding('1px 10px').borderRadius('5').minWidth('10em').height('32').props).content(If(GivenUp, TheWord,Keyboard)).props),
             React.createElement(Icon, elProps(pathTo('CorrectIndicator')).iconName('check_circle').show(IsCorrect).styles(elProps(pathTo('CorrectIndicator.Styles')).fontSize('40').color('green').props).props),
             React.createElement(TextElement, elProps(pathTo('WordPoints')).show(IsCorrect).content(Points(TheWord) + ' points added').props),
     ),
             React.createElement(Calculation, elProps(pathTo('IsCorrect')).show(false).props),
+            React.createElement(ScreenKeyboard, elProps(pathTo('Keyboard')).useRealKeyboard(true).props),
             React.createElement(Block, elProps(pathTo('WordButtons')).layout('horizontal wrapped').props,
             React.createElement(Button, elProps(pathTo('NextWord')).content('Next Word').appearance('outline').show(Not(Answering)).enabled(GameTimer.isRunning).action(NextWord_action).props),
             React.createElement(Button, elProps(pathTo('GiveUp')).content('Skip Word').appearance('outline').show(Answering).action(GiveUp_action).props),
