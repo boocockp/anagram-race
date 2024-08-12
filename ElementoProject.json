@@ -366,6 +366,10 @@
                 "layout": "vertical",
                 "show": {
                   "expr": "Status == 'Playing'"
+                },
+                "styles": {
+                  "width": "100%",
+                  "minWidth": "w"
                 }
               },
               "elements": [
@@ -509,7 +513,10 @@
                   "id": "screenkeyboard_1",
                   "name": "Keyboard",
                   "properties": {
-                    "useRealKeyboard": true
+                    "useRealKeyboard": true,
+                    "styles": {
+                      "width": "100%"
+                    }
                   },
                   "kind": "ScreenKeyboard"
                 },
