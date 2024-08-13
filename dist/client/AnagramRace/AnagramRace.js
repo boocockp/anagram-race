@@ -103,7 +103,7 @@ function MainPage(props) {
     }), [])
     Elemento.elementoDebug(() => eval(Elemento.useDebugExpr()))
 
-    return React.createElement(Page, elProps(props.path).props,
+    return React.createElement(Page, elProps(props.path).styles(elProps(pathTo('MainPage.Styles')).props).props,
         React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('48').fontFamily('Luckiest Guy').color('#7529df').props).content('Agraman Race').props),
         React.createElement(Timer, elProps(pathTo('GameTimer')).show(false).props),
         React.createElement(Data, elProps(pathTo('Status')).display(false).props),
@@ -154,7 +154,7 @@ Or Start Game to dive right in!`).props),
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).color('#7529df').fontFamily('Luckiest Guy').fontSize('28').props).content('Paused...').props),
             React.createElement(TextElement, elProps(pathTo('PauseText')).styles(elProps(pathTo('PauseText.Styles')).fontSize('20').props).content('Click Continue Game to carry on').props),
     ),
-        React.createElement(Block, elProps(pathTo('PlayPanel')).layout('vertical').show(Status == 'Playing').styles(elProps(pathTo('PlayPanel.Styles')).width('100%').minWidth('w').props).props,
+        React.createElement(Block, elProps(pathTo('PlayPanel')).layout('vertical').show(Status == 'Playing').styles(elProps(pathTo('PlayPanel.Styles')).width('100%').padding('0').props).props,
             React.createElement(Block, elProps(pathTo('QuestionLayout')).layout('horizontal').props,
             React.createElement(TextElement, elProps(pathTo('ScrambledLetters')).styles(elProps(pathTo('ScrambledLetters.Styles')).fontSize('20').letterSpacing('1px').props).content(ScrambledWord).props),
             React.createElement(TextElement, elProps(pathTo('PointsToWin')).styles(elProps(pathTo('PointsToWin.Styles')).paddingTop('3').marginLeft('5em').props).content(Points(TheWord) + ' points').props),

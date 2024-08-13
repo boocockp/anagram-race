@@ -14,7 +14,9 @@
         {
           "id": "page_1",
           "name": "Main Page",
-          "properties": {},
+          "properties": {
+            "styles": {}
+          },
           "elements": [
             {
               "id": "text_1",
@@ -369,7 +371,7 @@
                 },
                 "styles": {
                   "width": "100%",
-                  "minWidth": "w"
+                  "padding": "0"
                 }
               },
               "elements": [
