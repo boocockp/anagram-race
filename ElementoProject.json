@@ -295,6 +295,9 @@
               "properties": {
                 "show": {
                   "expr": "Status == 'Ready'"
+                },
+                "styles": {
+                  "padding": "0"
                 }
               },
               "elements": [
@@ -331,6 +334,9 @@
               "properties": {
                 "show": {
                   "expr": "Status == 'Paused'"
+                },
+                "styles": {
+                  "padding": "0"
                 }
               },
               "elements": [
@@ -351,7 +357,7 @@
                   "id": "text_21",
                   "name": "Pause Text",
                   "properties": {
-                    "content": "Click Continue Game to carry on",
+                    "content": "Click Resume to carry on",
                     "styles": {
                       "fontSize": "20"
                     }
@@ -587,6 +593,9 @@
               "properties": {
                 "show": {
                   "expr": "Status == 'Ended'"
+                },
+                "styles": {
+                  "padding": "0"
                 }
               },
               "elements": [
@@ -680,7 +689,8 @@
                     },
                     "show": {
                       "expr": "Status == 'Paused'"
-                    }
+                    },
+                    "content": "Resume"
                   },
                   "kind": "Button"
                 },
