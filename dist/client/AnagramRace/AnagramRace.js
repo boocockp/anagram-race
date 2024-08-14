@@ -118,13 +118,13 @@ function MainPage(props) {
             React.createElement(TextElement, elProps(pathTo('InstructionsText')).allowHtml(true).content(`You have 3 minutes to solve as many anagrams as you can.
 
 
-For each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.
+For each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.
 
 
 Click Skip Word to give up and show the answer.
 
 
-Click Show A Letter to show some of the initial letters - but you will score fewer points.
+Click Show A Letter to show up to three of the initial letters - but you will score fewer points.
 
 
 Click Next Word to move on to the next word.
@@ -137,8 +137,8 @@ Click Next Word to move on to the next word.
 </b>`).props),
             React.createElement(Button, elProps(pathTo('StartGame2')).content('Start Game').appearance('filled').show(Not(GameRunning)).action(StartGame2_action).props),
     ),
-        React.createElement(Block, elProps(pathTo('StatsLayout')).layout('horizontal').styles(elProps(pathTo('StatsLayout.Styles')).fontSize('24').props).props,
-            React.createElement(TextElement, elProps(pathTo('ScoreDisplay')).show(Or(GameRunning, Status == 'Ended')).styles(elProps(pathTo('ScoreDisplay.Styles')).fontSize('inherit').color('blue').marginRight('100').props).content(Score + ' points').props),
+        React.createElement(Block, elProps(pathTo('StatsLayout')).layout('horizontal').styles(elProps(pathTo('StatsLayout.Styles')).fontSize('24').width('100%').justifyContent('space-between').props).props,
+            React.createElement(TextElement, elProps(pathTo('ScoreDisplay')).show(Or(GameRunning, Status == 'Ended')).styles(elProps(pathTo('ScoreDisplay.Styles')).fontSize('inherit').color('blue').props).content(Score + ' points').props),
             React.createElement(TextElement, elProps(pathTo('TimeDisplay')).show(GameRunning).styles(elProps(pathTo('TimeDisplay.Styles')).fontSize('inherit').color('green').props).content(Ceiling(GameTimer. remainingTime) + 's left').props),
             React.createElement(TextElement, elProps(pathTo('GameOver')).show(Status == 'Ended').styles(elProps(pathTo('GameOver.Styles')).fontSize('inherit').color('white').backgroundColor('green').padding('0 0.5em').borderRadius('8px').props).content('Game Over').props),
     ),

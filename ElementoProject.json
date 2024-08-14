@@ -200,7 +200,7 @@
                   "id": "text_10",
                   "name": "Instructions Text",
                   "properties": {
-                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer in the box - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Show A Letter to show some of the initial letters - but you will score fewer points.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n<ul>\n<li>Words may be plural</li>\n<li>You can Pause the game, but it will skip the word you're on</li>\n</b>",
+                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Show A Letter to show up to three of the initial letters - but you will score fewer points.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n<ul>\n<li>Words may be plural</li>\n<li>You can Pause the game, but it will skip the word you're on</li>\n</b>",
                     "allowHtml": true
                   },
                   "kind": "Text"
@@ -229,7 +229,9 @@
               "properties": {
                 "layout": "horizontal",
                 "styles": {
-                  "fontSize": "24"
+                  "fontSize": "24",
+                  "width": "100%",
+                  "justifyContent": "space-between"
                 }
               },
               "elements": [
@@ -242,8 +244,7 @@
                     },
                     "styles": {
                       "fontSize": "inherit",
-                      "color": "blue",
-                      "marginRight": "100"
+                      "color": "blue"
                     },
                     "show": {
                       "expr": "Or(GameRunning, Status == 'Ended')"
