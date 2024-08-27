@@ -236,7 +236,6 @@ const words = [
 "alike",
 "alive",
 "all",
-"allan",
 "alleged",
 "allergy",
 "alliance",

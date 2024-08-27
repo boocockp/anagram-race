@@ -22,7 +22,7 @@
               "id": "text_1",
               "name": "Title",
               "properties": {
-                "content": "Agraman Race",
+                "content": "Mubjled Words",
                 "styles": {
                   "fontSize": "48",
                   "fontFamily": "Luckiest Guy",
@@ -200,7 +200,7 @@
                   "id": "text_10",
                   "name": "Instructions Text",
                   "properties": {
-                    "content": "You have 3 minutes to solve as many anagrams as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Show A Letter to show up to three of the initial letters - but you will score fewer points.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n<ul>\n<li>Words may be plural</li>\n<li>You can Pause the game, but it will skip the word you're on</li>\n</b>",
+                    "content": "You have 3 minutes to solve as many jumbled wor as you can.\n\n\nFor each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.\n\n\nClick Skip Word to give up and show the answer.\n\n\nClick Show A Letter to show up to three of the initial letters - but you will score fewer points.\n\n\nClick Next Word to move on to the next word.\n\n\n<b>Tips</b>\n<ul>\n<li>Words may be plural</li>\n<li>You can Pause the game, but it will skip the word you're on</li>\n</b>",
                     "allowHtml": true
                   },
                   "kind": "Text"
@@ -319,7 +319,7 @@
                   "id": "text_14",
                   "name": "Ready Text",
                   "properties": {
-                    "content": "Solve as many anagrams as you can in 3 minutes\n\nClick Instructions to learn how to play\n\nOr Start Game to dive right in!",
+                    "content": "Un-jumble as many words as you can in 3 minutes\n\nClick Instructions to learn how to play\n\nOr Start Game to dive right in!",
                     "styles": {
                       "fontSize": "20"
                     }

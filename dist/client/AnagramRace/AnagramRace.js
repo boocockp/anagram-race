@@ -15,23 +15,23 @@ function MainPage(props) {
     const Score = _state.setObject(pathTo('Score'), new Data.State(stateProps(pathTo('Score')).value(0).props))
     const TheWord = _state.setObject(pathTo('TheWord'), new Data.State(stateProps(pathTo('TheWord')).props))
     const LettersShown = _state.setObject(pathTo('LettersShown'), new Data.State(stateProps(pathTo('LettersShown')).value(0).props))
-    const Points = React.useCallback(wrapFn(pathTo('Points'), 'calculation', (word) => {
+    const Points = _state.setObject(pathTo('Points'), React.useCallback(wrapFn(pathTo('Points'), 'calculation', (word) => {
         return Floor(Len(word) * 2 - LettersShown * 3)
-    }), [LettersShown])
+    }), [LettersShown]))
     const ScrambledWord = _state.setObject(pathTo('ScrambledWord'), new Data.State(stateProps(pathTo('ScrambledWord')).props))
     const GivenUp = _state.setObject(pathTo('GivenUp'), new Data.State(stateProps(pathTo('GivenUp')).value(false).props))
     const GameRunning = _state.setObject(pathTo('GameRunning'), new Calculation.State(stateProps(pathTo('GameRunning')).value(Or(Status == 'Playing', Status == 'Paused')).props))
-    const EndGame = React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', () => {
+    const EndGame = _state.setObject(pathTo('EndGame'), React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', () => {
         return Set(Status, 'Ended')
-    }), [Status])
+    }), [Status]))
     const GameTimer_endAction = React.useCallback(wrapFn(pathTo('GameTimer'), 'endAction', async ($timer) => {
         await EndGame()
     }), [EndGame])
     const GameTimer = _state.setObject(pathTo('GameTimer'), new Timer.State(stateProps(pathTo('GameTimer')).period(180).interval(1).endAction(GameTimer_endAction).props))
-    const PauseGame = React.useCallback(wrapFn(pathTo('PauseGame'), 'calculation', () => {
+    const PauseGame = _state.setObject(pathTo('PauseGame'), React.useCallback(wrapFn(pathTo('PauseGame'), 'calculation', () => {
         Set(Status, 'Paused')
         return GameTimer.Stop()
-    }), [Status, GameTimer])
+    }), [Status, GameTimer]))
     const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).initiallyOpen(true).props))
     const StatsLayout = _state.setObject(pathTo('StatsLayout'), new Block.State(stateProps(pathTo('StatsLayout')).props))
     const ReadyPanel = _state.setObject(pathTo('ReadyPanel'), new Block.State(stateProps(pathTo('ReadyPanel')).props))
@@ -41,15 +41,15 @@ function MainPage(props) {
     const CluesLayout = _state.setObject(pathTo('CluesLayout'), new Block.State(stateProps(pathTo('CluesLayout')).props))
     const AnswerLayout = _state.setObject(pathTo('AnswerLayout'), new Block.State(stateProps(pathTo('AnswerLayout')).props))
     const Keyboard = _state.setObject(pathTo('Keyboard'), new ScreenKeyboard.State(stateProps(pathTo('Keyboard')).props))
-    const StartNewWord = React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', () => {
+    const StartNewWord = _state.setObject(pathTo('StartNewWord'), React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', () => {
         let word = RandomFrom(WordList())
         Set(TheWord, word)
         Set(ScrambledWord, Join(Shuffle(Split(word))))
         Reset(LettersShown)
         Reset(Keyboard)
         return Reset(GivenUp)
-    }), [TheWord, ScrambledWord, LettersShown, Keyboard, GivenUp])
-    const StartNewGame = React.useCallback(wrapFn(pathTo('StartNewGame'), 'calculation', () => {
+    }), [TheWord, ScrambledWord, LettersShown, Keyboard, GivenUp]))
+    const StartNewGame = _state.setObject(pathTo('StartNewGame'), React.useCallback(wrapFn(pathTo('StartNewGame'), 'calculation', () => {
         Reset(GivenUp)
         Reset(Score)
         Reset(GameTimer)
@@ -58,12 +58,12 @@ function MainPage(props) {
         Set(Status, 'Playing')
         StartNewWord()
         return GameTimer.Start()
-    }), [GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord])
-    const ContinueGame = React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', () => {
+    }), [GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord]))
+    const ContinueGame = _state.setObject(pathTo('ContinueGame'), React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', () => {
         Set(Status, 'Playing')
         StartNewWord()
         return GameTimer.Start()
-    }), [Status, StartNewWord, GameTimer])
+    }), [Status, StartNewWord, GameTimer]))
     const IsCorrect_whenTrueAction = React.useCallback(wrapFn(pathTo('IsCorrect'), 'whenTrueAction', async () => {
         Set(Score, Score + (await Points(TheWord)))
     }), [Score, Points, TheWord])
@@ -104,7 +104,7 @@ function MainPage(props) {
     Elemento.elementoDebug(() => eval(Elemento.useDebugExpr()))
 
     return React.createElement(Page, elProps(props.path).styles(elProps(pathTo('MainPage.Styles')).props).props,
-        React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('48').fontFamily('Luckiest Guy').color('#7529df').props).content('Agraman Race').props),
+        React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('48').fontFamily('Luckiest Guy').color('#7529df').props).content('Mubjled Words').props),
         React.createElement(Timer, elProps(pathTo('GameTimer')).show(false).props),
         React.createElement(Data, elProps(pathTo('Status')).display(false).props),
         React.createElement(Data, elProps(pathTo('Score')).display(false).props),
@@ -115,7 +115,7 @@ function MainPage(props) {
         React.createElement(Calculation, elProps(pathTo('Answering')).show(false).props),
         React.createElement(Calculation, elProps(pathTo('GameRunning')).show(false).props),
         React.createElement(Dialog, elProps(pathTo('Instructions')).layout('vertical').showCloseButton(true).styles(elProps(pathTo('Instructions.Styles')).padding('2em').props).props,
-            React.createElement(TextElement, elProps(pathTo('InstructionsText')).allowHtml(true).content(`You have 3 minutes to solve as many anagrams as you can.
+            React.createElement(TextElement, elProps(pathTo('InstructionsText')).allowHtml(true).content(`You have 3 minutes to solve as many jumbled words as you can.
 
 
 For each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.
@@ -144,7 +144,7 @@ Click Next Word to move on to the next word.
     ),
         React.createElement(Block, elProps(pathTo('ReadyPanel')).layout('vertical').show(Status == 'Ready').styles(elProps(pathTo('ReadyPanel.Styles')).padding('0').props).props,
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).color('#7529df').fontFamily('Luckiest Guy').fontSize('28').props).content('Welcome!').props),
-            React.createElement(TextElement, elProps(pathTo('ReadyText')).styles(elProps(pathTo('ReadyText.Styles')).fontSize('20').props).content(`Solve as many anagrams as you can in 3 minutes
+            React.createElement(TextElement, elProps(pathTo('ReadyText')).styles(elProps(pathTo('ReadyText.Styles')).fontSize('20').props).content(`Un-jumble as many words as you can in 3 minutes
 
 Click Instructions to learn how to play
 
