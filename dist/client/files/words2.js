@@ -460,7 +460,6 @@ const words = [
 "asp",
 "aspect",
 "aspects",
-"aspnet",
 "ass",
 "assault",
 "assembled",

@@ -121,10 +121,8 @@ function MainPage(props) {
 For each word you will see the scrambled version and the points you can earn.  Type your answer - you will see a tick when it is correct.
 
 
+Click Show A Letter to show up to three of the initial letters - but you will score fewer points.  
 Click Skip Word to give up and show the answer.
-
-
-Click Show A Letter to show up to three of the initial letters - but you will score fewer points.
 
 
 Click Next Word to move on to the next word.
