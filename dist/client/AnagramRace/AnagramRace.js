@@ -8,7 +8,7 @@ const WordList = await import('../files/words2.js').then(...importHandlers('Word
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
     const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, Icon, ScreenKeyboard} = Elemento.components
-    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Ceiling, Left, If, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
+    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Ceiling, If, Left, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
     const {Reset, Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
     const Status = _state.setObject(pathTo('Status'), new Data.State(stateProps(pathTo('Status')).value('Ready').props))
@@ -32,13 +32,12 @@ function MainPage(props) {
         Set(Status, 'Paused')
         return GameTimer.Stop()
     }), [Status, GameTimer]))
-    const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).initiallyOpen(true).props))
+    const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).props))
     const StatsLayout = _state.setObject(pathTo('StatsLayout'), new Block.State(stateProps(pathTo('StatsLayout')).props))
     const ReadyPanel = _state.setObject(pathTo('ReadyPanel'), new Block.State(stateProps(pathTo('ReadyPanel')).props))
     const PausePanel = _state.setObject(pathTo('PausePanel'), new Block.State(stateProps(pathTo('PausePanel')).props))
     const PlayPanel = _state.setObject(pathTo('PlayPanel'), new Block.State(stateProps(pathTo('PlayPanel')).props))
     const QuestionLayout = _state.setObject(pathTo('QuestionLayout'), new Block.State(stateProps(pathTo('QuestionLayout')).props))
-    const CluesLayout = _state.setObject(pathTo('CluesLayout'), new Block.State(stateProps(pathTo('CluesLayout')).props))
     const AnswerLayout = _state.setObject(pathTo('AnswerLayout'), new Block.State(stateProps(pathTo('AnswerLayout')).props))
     const Keyboard = _state.setObject(pathTo('Keyboard'), new ScreenKeyboard.State(stateProps(pathTo('Keyboard')).props))
     const StartNewWord = _state.setObject(pathTo('StartNewWord'), React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', () => {
@@ -103,8 +102,8 @@ function MainPage(props) {
     }), [])
     Elemento.elementoDebug(() => eval(Elemento.useDebugExpr()))
 
-    return React.createElement(Page, elProps(props.path).styles(elProps(pathTo('MainPage.Styles')).props).props,
-        React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('48').fontFamily('Luckiest Guy').color('#7529df').props).content('Mubjled Words').props),
+    return React.createElement(Page, elProps(props.path).styles(elProps(pathTo('MainPage.Styles')).gap('4px').props).props,
+        React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontSize('32').fontFamily('Luckiest Guy').color('#7529df').props).content('Mubjled Words').props),
         React.createElement(Timer, elProps(pathTo('GameTimer')).show(false).props),
         React.createElement(Data, elProps(pathTo('Status')).display(false).props),
         React.createElement(Data, elProps(pathTo('Score')).display(false).props),
@@ -144,7 +143,7 @@ Click Next Word to move on to the next word.
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).color('#7529df').fontFamily('Luckiest Guy').fontSize('28').props).content('Welcome!').props),
             React.createElement(TextElement, elProps(pathTo('ReadyText')).styles(elProps(pathTo('ReadyText.Styles')).fontSize('20').props).content(`Un-jumble as many words as you can in 3 minutes
 
-Click Instructions to learn how to play
+Click Help to learn how to play
 
 Or Start Game to dive right in!`).props),
     ),
@@ -157,13 +156,11 @@ Or Start Game to dive right in!`).props),
             React.createElement(TextElement, elProps(pathTo('ScrambledLetters')).styles(elProps(pathTo('ScrambledLetters.Styles')).fontSize('20').letterSpacing('1px').props).content(ScrambledWord).props),
             React.createElement(TextElement, elProps(pathTo('PointsToWin')).styles(elProps(pathTo('PointsToWin.Styles')).paddingTop('3').marginLeft('5em').props).content(Points(TheWord) + ' points').props),
     ),
-            React.createElement(Block, elProps(pathTo('CluesLayout')).layout('horizontal').props,
-            React.createElement(TextElement, elProps(pathTo('StartsWith')).show(LettersShown > 0).styles(elProps(pathTo('StartsWith.Styles')).fontSize('20').letterSpacing('1px').props).content('Starts with: ' + Left(TheWord, LettersShown)).props),
-    ),
             React.createElement(Block, elProps(pathTo('AnswerLayout')).layout('horizontal wrapped').styles(elProps(pathTo('AnswerLayout.Styles')).props).props,
-            React.createElement(TextElement, elProps(pathTo('CurrentAttempt')).styles(elProps(pathTo('CurrentAttempt.Styles')).fontSize('20').border('2px solid lightgray').padding('1px 10px').borderRadius('5').minWidth('10em').height('32').props).content(If(GivenUp, TheWord,Keyboard)).props),
+            React.createElement(TextElement, elProps(pathTo('CurrentAttempt')).styles(elProps(pathTo('CurrentAttempt.Styles')).fontSize('20').border('2px solid lightgray').padding('1px 10px').borderRadius('5').minWidth('7em').height('32').props).content(If(GivenUp, TheWord,Keyboard)).props),
             React.createElement(Icon, elProps(pathTo('CorrectIndicator')).iconName('check_circle').show(IsCorrect).styles(elProps(pathTo('CorrectIndicator.Styles')).fontSize('40').color('green').props).props),
-            React.createElement(TextElement, elProps(pathTo('WordPoints')).show(IsCorrect).content(Points(TheWord) + ' points added').props),
+            React.createElement(TextElement, elProps(pathTo('WordPoints')).show(IsCorrect).styles(elProps(pathTo('WordPoints.Styles')).fontSize('20').props).content('+ ' + Points(TheWord) + ' points').props),
+            React.createElement(TextElement, elProps(pathTo('StartsWith')).show(And(Answering, LettersShown > 0)).styles(elProps(pathTo('StartsWith.Styles')).fontSize('20').letterSpacing('1px').props).content('Starts with: ' + Left(TheWord, LettersShown)).props),
     ),
             React.createElement(Calculation, elProps(pathTo('IsCorrect')).show(false).props),
             React.createElement(ScreenKeyboard, elProps(pathTo('Keyboard')).useRealKeyboard(true).styles(elProps(pathTo('Keyboard.Styles')).width('100%').props).props),
@@ -180,10 +177,10 @@ Or Start Game to dive right in!`).props),
     ),
         React.createElement(Block, elProps(pathTo('ControlsLayout')).layout('horizontal').props,
             React.createElement(Button, elProps(pathTo('StartGame')).content('Start Game').appearance('filled').show(Not(GameRunning)).action(StartGame_action).props),
-            React.createElement(Button, elProps(pathTo('StopGame')).content('Stop Game').appearance('outline').show(GameRunning).action(StopGame_action).props),
-            React.createElement(Button, elProps(pathTo('PauseGame')).content('Pause Game').appearance('outline').show(Status == 'Playing').action(PauseGame_action).props),
+            React.createElement(Button, elProps(pathTo('StopGame')).content('Stop').appearance('outline').show(GameRunning).action(StopGame_action).props),
+            React.createElement(Button, elProps(pathTo('PauseGame')).content('Pause').appearance('outline').show(Status == 'Playing').action(PauseGame_action).props),
             React.createElement(Button, elProps(pathTo('ContinueGame')).content('Resume').appearance('outline').show(Status == 'Paused').action(ContinueGame_action).props),
-            React.createElement(Button, elProps(pathTo('Instructions')).content('Instructions').appearance('outline').action(Instructions_action).props),
+            React.createElement(Button, elProps(pathTo('Instructions')).content('Help').appearance('outline').action(Instructions_action).props),
     ),
     )
 }

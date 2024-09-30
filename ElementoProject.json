@@ -15,7 +15,9 @@
           "id": "page_1",
           "name": "Main Page",
           "properties": {
-            "styles": {}
+            "styles": {
+              "gap": "4px"
+            }
           },
           "elements": [
             {
@@ -24,7 +26,7 @@
               "properties": {
                 "content": "Mubjled Words",
                 "styles": {
-                  "fontSize": "48",
+                  "fontSize": "32",
                   "fontFamily": "Luckiest Guy",
                   "color": "#7529df"
                 }
@@ -188,7 +190,6 @@
               "id": "dialog_1",
               "name": "Instructions",
               "properties": {
-                "initiallyOpen": true,
                 "layout": "vertical",
                 "showCloseButton": true,
                 "styles": {
@@ -319,7 +320,7 @@
                   "id": "text_14",
                   "name": "Ready Text",
                   "properties": {
-                    "content": "Un-jumble as many words as you can in 3 minutes\n\nClick Instructions to learn how to play\n\nOr Start Game to dive right in!",
+                    "content": "Un-jumble as many words as you can in 3 minutes\n\nClick Help to learn how to play\n\nOr Start Game to dive right in!",
                     "styles": {
                       "fontSize": "20"
                     }
@@ -421,33 +422,6 @@
                   "kind": "Block"
                 },
                 {
-                  "id": "block_8",
-                  "name": "Clues Layout",
-                  "properties": {
-                    "layout": "horizontal"
-                  },
-                  "elements": [
-                    {
-                      "id": "text_22",
-                      "name": "Starts With",
-                      "properties": {
-                        "content": {
-                          "expr": "'Starts with: ' + Left(TheWord, LettersShown)"
-                        },
-                        "styles": {
-                          "fontSize": "20",
-                          "letterSpacing": "1px"
-                        },
-                        "show": {
-                          "expr": "LettersShown > 0"
-                        }
-                      },
-                      "kind": "Text"
-                    }
-                  ],
-                  "kind": "Block"
-                },
-                {
                   "id": "block_4",
                   "name": "Answer Layout",
                   "properties": {
@@ -467,7 +441,7 @@
                           "border": "2px solid lightgray",
                           "padding": "1px 10px",
                           "borderRadius": "5",
-                          "minWidth": "10em",
+                          "minWidth": "7em",
                           "height": "32"
                         }
                       },
@@ -493,10 +467,30 @@
                       "name": "Word Points",
                       "properties": {
                         "content": {
-                          "expr": "Points(TheWord) + \" points added\""
+                          "expr": "\"+ \" + Points(TheWord) + \" points\""
                         },
                         "show": {
                           "expr": "IsCorrect"
+                        },
+                        "styles": {
+                          "fontSize": "20"
+                        }
+                      },
+                      "kind": "Text"
+                    },
+                    {
+                      "id": "text_22",
+                      "name": "Starts With",
+                      "properties": {
+                        "content": {
+                          "expr": "'Starts with: ' + Left(TheWord, LettersShown)"
+                        },
+                        "styles": {
+                          "fontSize": "20",
+                          "letterSpacing": "1px"
+                        },
+                        "show": {
+                          "expr": "And(Answering, LettersShown > 0)"
                         }
                       },
                       "kind": "Text"
@@ -664,7 +658,8 @@
                     },
                     "show": {
                       "expr": "GameRunning"
-                    }
+                    },
+                    "content": "Stop"
                   },
                   "kind": "Button"
                 },
@@ -677,7 +672,8 @@
                     },
                     "show": {
                       "expr": "Status == 'Playing'"
-                    }
+                    },
+                    "content": "Pause"
                   },
                   "kind": "Button"
                 },
@@ -701,7 +697,8 @@
                   "properties": {
                     "action": {
                       "expr": "Instructions.Show()"
-                    }
+                    },
+                    "content": "Help"
                   },
                   "kind": "Button"
                 }
