@@ -8,9 +8,11 @@ const WordList = await import('../files/words2.js').then(...importHandlers('Word
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
     const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, Icon, ScreenKeyboard} = Elemento.components
-    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Ceiling, If, Left, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
+    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Record, Ceiling, If, Left, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
     const {Reset, Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
+    const app = _state.useObject('AnagramRace')
+    const {SendMessage, CurrentUrl} = app
     const Status = _state.setObject(pathTo('Status'), new Data.State(stateProps(pathTo('Status')).value('Ready').props))
     const Score = _state.setObject(pathTo('Score'), new Data.State(stateProps(pathTo('Score')).value(0).props))
     const TheWord = _state.setObject(pathTo('TheWord'), new Data.State(stateProps(pathTo('TheWord')).props))
@@ -21,9 +23,13 @@ function MainPage(props) {
     const ScrambledWord = _state.setObject(pathTo('ScrambledWord'), new Data.State(stateProps(pathTo('ScrambledWord')).props))
     const GivenUp = _state.setObject(pathTo('GivenUp'), new Data.State(stateProps(pathTo('GivenUp')).value(false).props))
     const GameRunning = _state.setObject(pathTo('GameRunning'), new Calculation.State(stateProps(pathTo('GameRunning')).value(Or(Status == 'Playing', Status == 'Paused')).props))
+    const SendScore = _state.setObject(pathTo('SendScore'), React.useCallback(wrapFn(pathTo('SendScore'), 'calculation', (score) => {
+        return SendMessage('parent', Record('score', Score, 'url', CurrentUrl().text))
+    }), [Score]))
     const EndGame = _state.setObject(pathTo('EndGame'), React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', () => {
-        return Set(Status, 'Ended')
-    }), [Status]))
+        Set(Status, 'Ended')
+        return SendScore(Score)
+    }), [Status, SendScore, Score]))
     const GameTimer_endAction = React.useCallback(wrapFn(pathTo('GameTimer'), 'endAction', async ($timer) => {
         await EndGame()
     }), [EndGame])
