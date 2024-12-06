@@ -8,7 +8,7 @@ const WordList = await import('../files/words2.js').then(...importHandlers('Word
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
     const {Page, TextElement, Timer, Data, Calculation, Dialog, Button, Block, Icon, ScreenKeyboard} = Elemento.components
-    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Record, Ceiling, If, Left, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
+    const {Floor, Len, And, Not, Or, RandomFrom, Join, Shuffle, Split, Log, Record, Ceiling, If, Left, Eq, Lowercase, Trim, Lte} = Elemento.globalFunctions
     const {Reset, Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
     const app = _state.useObject('AnagramRace')
@@ -23,20 +23,21 @@ function MainPage(props) {
     const ScrambledWord = _state.setObject(pathTo('ScrambledWord'), new Data.State(stateProps(pathTo('ScrambledWord')).props))
     const GivenUp = _state.setObject(pathTo('GivenUp'), new Data.State(stateProps(pathTo('GivenUp')).value(false).props))
     const GameRunning = _state.setObject(pathTo('GameRunning'), new Calculation.State(stateProps(pathTo('GameRunning')).value(Or(Status == 'Playing', Status == 'Paused')).props))
-    const SendScore = _state.setObject(pathTo('SendScore'), React.useCallback(wrapFn(pathTo('SendScore'), 'calculation', (score) => {
-        return SendMessage('parent', Record('score', Score, 'url', CurrentUrl().text))
+    const SendScore = _state.setObject(pathTo('SendScore'), React.useCallback(wrapFn(pathTo('SendScore'), 'calculation', async (score) => {
+        Log('Send Score', score)
+        await SendMessage('parent', Record('score', Score, 'url', (await CurrentUrl()).text))
     }), [Score]))
-    const EndGame = _state.setObject(pathTo('EndGame'), React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', () => {
+    const EndGame = _state.setObject(pathTo('EndGame'), React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', async () => {
         Set(Status, 'Ended')
-        return SendScore(Score)
+        await SendScore(Score)
     }), [Status, SendScore, Score]))
     const GameTimer_endAction = React.useCallback(wrapFn(pathTo('GameTimer'), 'endAction', async ($timer) => {
         await EndGame()
     }), [EndGame])
     const GameTimer = _state.setObject(pathTo('GameTimer'), new Timer.State(stateProps(pathTo('GameTimer')).period(180).interval(1).endAction(GameTimer_endAction).props))
-    const PauseGame = _state.setObject(pathTo('PauseGame'), React.useCallback(wrapFn(pathTo('PauseGame'), 'calculation', () => {
+    const PauseGame = _state.setObject(pathTo('PauseGame'), React.useCallback(wrapFn(pathTo('PauseGame'), 'calculation', async () => {
         Set(Status, 'Paused')
-        return GameTimer.Stop()
+        await GameTimer.Stop()
     }), [Status, GameTimer]))
     const Instructions = _state.setObject(pathTo('Instructions'), new Dialog.State(stateProps(pathTo('Instructions')).props))
     const StatsLayout = _state.setObject(pathTo('StatsLayout'), new Block.State(stateProps(pathTo('StatsLayout')).props))
@@ -46,31 +47,31 @@ function MainPage(props) {
     const QuestionLayout = _state.setObject(pathTo('QuestionLayout'), new Block.State(stateProps(pathTo('QuestionLayout')).props))
     const AnswerLayout = _state.setObject(pathTo('AnswerLayout'), new Block.State(stateProps(pathTo('AnswerLayout')).props))
     const Keyboard = _state.setObject(pathTo('Keyboard'), new ScreenKeyboard.State(stateProps(pathTo('Keyboard')).props))
-    const StartNewWord = _state.setObject(pathTo('StartNewWord'), React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', () => {
-        let word = RandomFrom(WordList())
+    const StartNewWord = _state.setObject(pathTo('StartNewWord'), React.useCallback(wrapFn(pathTo('StartNewWord'), 'calculation', async () => {
+        let word = RandomFrom(await WordList())
         Set(TheWord, word)
         Set(ScrambledWord, Join(Shuffle(Split(word))))
         Reset(LettersShown)
-        Reset(Keyboard)
-        return Reset(GivenUp)
+        Reset(Keyboard) 
+        Reset(GivenUp)
     }), [TheWord, ScrambledWord, LettersShown, Keyboard, GivenUp]))
-    const StartNewGame = _state.setObject(pathTo('StartNewGame'), React.useCallback(wrapFn(pathTo('StartNewGame'), 'calculation', () => {
+    const StartNewGame = _state.setObject(pathTo('StartNewGame'), React.useCallback(wrapFn(pathTo('StartNewGame'), 'calculation', async () => {
         Reset(GivenUp)
         Reset(Score)
         Reset(GameTimer)
         Reset(TheWord)
         Reset(ScrambledWord)
         Set(Status, 'Playing')
-        StartNewWord()
-        return GameTimer.Start()
+        await StartNewWord()
+        await GameTimer.Start()
     }), [GivenUp, Score, GameTimer, TheWord, ScrambledWord, Status, StartNewWord]))
-    const ContinueGame = _state.setObject(pathTo('ContinueGame'), React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', () => {
+    const ContinueGame = _state.setObject(pathTo('ContinueGame'), React.useCallback(wrapFn(pathTo('ContinueGame'), 'calculation', async () => {
         Set(Status, 'Playing')
-        StartNewWord()
-        return GameTimer.Start()
+        await StartNewWord()
+        await GameTimer.Start()
     }), [Status, StartNewWord, GameTimer]))
-    const IsCorrect_whenTrueAction = React.useCallback(wrapFn(pathTo('IsCorrect'), 'whenTrueAction', async () => {
-        Set(Score, Score + (await Points(TheWord)))
+    const IsCorrect_whenTrueAction = React.useCallback(wrapFn(pathTo('IsCorrect'), 'whenTrueAction', () => {
+        Set(Score, Score + Points(TheWord))
     }), [Score, Points, TheWord])
     const IsCorrect = _state.setObject(pathTo('IsCorrect'), new Calculation.State(stateProps(pathTo('IsCorrect')).value(And(Eq(Lowercase(Trim(Keyboard)), TheWord), Not(GivenUp))).whenTrueAction(IsCorrect_whenTrueAction).props))
     const Answering = _state.setObject(pathTo('Answering'), new Calculation.State(stateProps(pathTo('Answering')).value(And(TheWord, Not(IsCorrect), Not(GivenUp))).props))

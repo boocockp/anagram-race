@@ -193,7 +193,7 @@
                 "input1": "score",
                 "action": true,
                 "calculation": {
-                  "expr": "SendMessage('parent', Record('score', Score, 'url', CurrentUrl().text))"
+                  "expr": "Log('Send Score', score)\nSendMessage('parent', Record('score', Score, 'url', CurrentUrl().text))"
                 }
               },
               "kind": "Function"
