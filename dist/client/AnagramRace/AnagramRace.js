@@ -100,13 +100,13 @@ function MainPage(props) {
     }), [EndGame, GameTimer])
     const PauseGame_action = React.useCallback(wrapFn(pathTo('PauseGame'), 'action', async () => {
         await PauseGame()
-    }), [])
+    }), [PauseGame])
     const ContinueGame_action = React.useCallback(wrapFn(pathTo('ContinueGame'), 'action', async () => {
         await ContinueGame()
-    }), [])
+    }), [ContinueGame])
     const Instructions_action = React.useCallback(wrapFn(pathTo('Instructions'), 'action', async () => {
         await Instructions.Show()
-    }), [])
+    }), [Instructions])
     Elemento.elementoDebug(() => eval(Elemento.useDebugExpr()))
 
     return React.createElement(Page, elProps(props.path).styles(elProps(pathTo('MainPage.Styles')).gap('4px').props).props,
